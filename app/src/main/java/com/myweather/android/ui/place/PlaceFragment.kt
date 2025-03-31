@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.myweather.android.MainActivity
 import com.myweather.android.R
+import com.myweather.android.ui.weather.WeatherActivity
 
 //import com.myweather.android.ui.weather.WeatherActivity
 //import kotlinx.android.synthetic.main.fragment_place.*
@@ -45,6 +46,19 @@ class PlaceFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if(viewModel.isPlaceSaved()) {
+            val place = viewModel.getSavedPlace()
+            val intent = Intent(context, WeatherActivity::class.java).apply {
+                putExtra("location_lng", place.location.lng)
+                putExtra("location_lat", place.location.lat)
+                putExtra("place_name", place.name)
+            }
+            startActivity(intent)
+            activity?.finish() //???
+            return
+        }
+
         Log.d("PlaceFragment", "onViewCreated-start")
         //Get views
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
@@ -99,75 +113,5 @@ class PlaceFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onAttach(context:Context) {
         super.onAttach(context)
-
-//        viewModel.placeLiveData.observe(viewLifecycleOwner, Observer { result ->
-//            Log.d("PlaceFragment.observe", "observe start.")
-//            val places = result.getOrNull()
-//            Log.d("PlaceFragment.observe", "places value:" + places.toString())
-//            if (places != null) {
-//                val recyclerView = activity.findViewById<RecyclerView>(R.id.recyclerView)
-//                val bgImageView = activity.findViewById<ImageView>(R.id.bgImageView)
-//
-//                recyclerView.visibility = View.VISIBLE
-//                Log.d("PlaceFragment.observe","set recycleView visibility - visible")
-//                bgImageView.visibility = View.GONE
-//                Log.d("PlaceFragment.observe","set bgImageView visibility - gone")
-//                viewModel.placeList.clear()
-//                viewModel.placeList.addAll(places)
-//                Log.d("PlaceFragment.observe","add places to viewModel.placeList")
-//                adapter.notifyDataSetChanged()
-//                Log.d("PlaceFragment.observe","adapter.notifyDataSetChanged() completed")
-//            } else {
-//                Toast.makeText(activity, "未能查询到任何地点", Toast.LENGTH_SHORT).show()
-//                result.exceptionOrNull()?.printStackTrace()
-//            }
-//            Log.d("PlaceFragment.observe", "observe end.")
-//        })
     }
-
-    /*
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        if (activity is MainActivity && viewModel.isPlaceSaved()) {
-            val place = viewModel.getSavedPlace()
-            val intent = Intent(context, WeatherActivity::class.java).apply {
-                putExtra("location_lng", place.location.lng)
-                putExtra("location_lat", place.location.lat)
-                putExtra("place_name", place.name)
-            }
-            startActivity(intent)
-            activity?.finish()
-            return
-        }
-        val layoutManager = LinearLayoutManager(activity)
-        recyclerView.layoutManager = layoutManager
-        adapter = PlaceAdapter(this, viewModel.placeList)
-        recyclerView.adapter = adapter
-        searchPlaceEdit.addTextChangedListener { editable ->
-            val content = editable.toString()
-            if (content.isNotEmpty()) {
-                viewModel.searchPlaces(content)
-            } else {
-                recyclerView.visibility = View.GONE
-                bgImageView.visibility = View.VISIBLE
-                viewModel.placeList.clear()
-                adapter.notifyDataSetChanged()
-            }
-        }
-        viewModel.placeLiveData.observe(this, Observer { result ->
-            val places = result.getOrNull()
-            if (places != null) {
-                recyclerView.visibility = View.VISIBLE
-                bgImageView.visibility = View.GONE
-                viewModel.placeList.clear()
-                viewModel.placeList.addAll(places)
-                adapter.notifyDataSetChanged()
-            } else {
-                Toast.makeText(activity, "未能查询到任何地点", Toast.LENGTH_SHORT).show()
-                result.exceptionOrNull()?.printStackTrace()
-            }
-        })
-    }
-    */
 }

@@ -20,7 +20,7 @@ class PlaceViewModel : ViewModel() {
     */
 
     val placeLiveData = searchLiveData.switchMap { query ->
-        Repository.searchPlaces(query)
+        Repository. searchPlaces(query)
     }
 
     fun searchPlaces(query: String) {
@@ -30,9 +30,9 @@ class PlaceViewModel : ViewModel() {
         Log.d("PlaceViewModel.searchPlaces", "search - end.")
     }
 
-    //fun savePlace(place: Place) = Repository.savePlace(place)
+    fun savePlace(place: Place) = Repository.savePlace(place)
 
-    //fun getSavedPlace() = Repository.getSavedPlace()
+    fun getSavedPlace() = Repository.getSavedPlace()
 
-    //fun isPlaceSaved() = Repository.isPlaceSaved()
+    fun isPlaceSaved() = Repository.isPlaceSaved()
 }
