@@ -54,14 +54,14 @@ class WeatherActivity : AppCompatActivity() {
             insets
         }
 
-        val navBtnView = findViewById<Button>(R.id.navBtn)
+       /* val navBtnView = findViewById<Button>(R.id.navBtn)
         navBtnView.setOnApplyWindowInsetsListener{ v, insets ->
             val insetsCompat = insets.getInsets(WindowInsets.Type.systemBars())
             val topInset = insetsCompat.top
             navBtnView.setPadding(navBtnView.paddingLeft, topInset,
                 navBtnView.paddingRight, navBtnView.paddingBottom)
             insets
-        }
+        }*/
 
         if(viewModel.locationLng.isEmpty()){
             viewModel.locationLng = intent.getStringExtra("location_lng") ?: ""
