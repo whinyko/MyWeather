@@ -45,23 +45,23 @@ class WeatherActivity : AppCompatActivity() {
         binding = ActivityWeatherBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val placeNameView = findViewById<TextView>(R.id.placeName)
+      /*  val placeNameView = findViewById<TextView>(R.id.placeName)
         placeNameView.setOnApplyWindowInsetsListener{ v, insets ->
             val insetsCompat = insets.getInsets(WindowInsets.Type.systemBars())
             val topInset = insetsCompat.top
             placeNameView.setPadding(placeNameView.paddingLeft, topInset,
                 placeNameView.paddingRight, placeNameView.paddingBottom)
             insets
-        }
+        }*/
 
-       /* val navBtnView = findViewById<Button>(R.id.navBtn)
-        navBtnView.setOnApplyWindowInsetsListener{ v, insets ->
+       val titleView = findViewById<FrameLayout>(R.id.titleLayout)
+        titleView.setOnApplyWindowInsetsListener{ v, insets ->
             val insetsCompat = insets.getInsets(WindowInsets.Type.systemBars())
             val topInset = insetsCompat.top
-            navBtnView.setPadding(navBtnView.paddingLeft, topInset,
-                navBtnView.paddingRight, navBtnView.paddingBottom)
+            titleView.setPadding(titleView.paddingLeft, topInset,
+                titleView.paddingRight, titleView.paddingBottom)
             insets
-        }*/
+        }
 
         if(viewModel.locationLng.isEmpty()){
             viewModel.locationLng = intent.getStringExtra("location_lng") ?: ""
