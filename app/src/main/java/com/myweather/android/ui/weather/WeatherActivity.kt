@@ -1,5 +1,6 @@
 package com.myweather.android.ui.weather
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -7,16 +8,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowInsets
+import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.myweather.android.R
 import com.myweather.android.databinding.ActivityWeatherBinding
+import com.myweather.android.logic.Repository.refreshWeather
 import com.myweather.android.logic.model.Weather
 import com.myweather.android.logic.model.getSky
 import java.text.SimpleDateFormat
@@ -26,7 +32,8 @@ class WeatherActivity : AppCompatActivity() {
 
     val viewModel by lazy {ViewModelProvider(this).get(WeatherViewModel::class.java)}
 
-    private lateinit var binding: ActivityWeatherBinding
+    //private lateinit var binding: ActivityWeatherBinding
+    lateinit var binding: ActivityWeatherBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +49,17 @@ class WeatherActivity : AppCompatActivity() {
         placeNameView.setOnApplyWindowInsetsListener{ v, insets ->
             val insetsCompat = insets.getInsets(WindowInsets.Type.systemBars())
             val topInset = insetsCompat.top
-
             placeNameView.setPadding(placeNameView.paddingLeft, topInset,
                 placeNameView.paddingRight, placeNameView.paddingBottom)
+            insets
+        }
+
+        val navBtnView = findViewById<Button>(R.id.navBtn)
+        navBtnView.setOnApplyWindowInsetsListener{ v, insets ->
+            val insetsCompat = insets.getInsets(WindowInsets.Type.systemBars())
+            val topInset = insetsCompat.top
+            navBtnView.setPadding(navBtnView.paddingLeft, topInset,
+                navBtnView.paddingRight, navBtnView.paddingBottom)
             insets
         }
 
@@ -70,8 +85,39 @@ class WeatherActivity : AppCompatActivity() {
                 Toast.makeText(this,"無法成功獲取天氣信息", Toast.LENGTH_SHORT).show()
                 result.exceptionOrNull()?.printStackTrace()
             }
+
+            binding.swipeRefresh.isRefreshing = false
         })
+
+        binding.swipeRefresh.setColorSchemeResources(R.color.colorPrimary)
+        refreshWeather()
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshWeather()
+        }
+
+        binding.layoutNow.navBtn.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        binding.drawerLayout.addDrawerListener(object:DrawerLayout.DrawerListener{
+            override fun onDrawerStateChanged(newState: Int) {}
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+
+            override fun onDrawerOpened(drawerView: View) {}
+
+            override fun onDrawerClosed(drawerView: View) {
+                val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                manager.hideSoftInputFromWindow(drawerView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+            }
+        })
+        //viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
+    }
+
+    //private fun refreshWeather() {
+    fun refreshWeather() {
         viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
+        binding.swipeRefresh.isRefreshing = true
     }
 
     private fun showWeatherInfo(weather: Weather) {
